@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SIGNAL — Token Launch Radar</title>
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+<header class="top">
+  <div class="brand"><span class="pulse" aria-hidden="true"></span><span class="brand-name">SIGNAL</span><span class="brand-sub">Token Launch Radar</span></div>
+  <p class="tagline">Every pre-token protocol in the snapshot, ranked by what its token would be worth — and what to do about it before it launches.</p>
+</header>
+<main id="app" aria-busy="true">
+  <section class="stats" id="stats"></section>
+  <nav class="tabs" id="tabs">
+    <button type="button" data-tab="pre" class="active">Pre-token board</button>
+    <button type="button" data-tab="live">Live tokens</button>
+  </nav>
+  <section class="controls" id="controls">
+    <input type="search" id="q" placeholder="Search name or slug…" aria-label="Search protocols">
+    <select id="cat" aria-label="Filter by category"><option value="all">All categories</option></select>
+    <select id="chain" aria-label="Filter by chain"><option value="all">All chains</option></select>
+    <select id="sort" aria-label="Sort by">
+      <option value="implied">Sort: implied value</option>
+      <option value="tvl">Sort: TVL</option>
+      <option value="growth">Sort: 7-day growth</option>
+      <option value="age">Sort: age</option>
+    </select>
+    <label class="check"><input type="checkbox" id="watchonly"> Watchlist only</label>
+  </section>
+  <p class="count" id="count"></p>
+  <div class="tablewrap"><table id="board">
+    <thead><tr>
+      <th class="num">#</th><th>Protocol</th><th>Category</th><th>Chains</th>
+      <th class="num">TVL</th><th class="num">7d</th><th class="num">Age</th><th class="num">Implied value</th>
+    </tr></thead>
+    <tbody id="rows"></tbody>
+  </table></div>
+  <section class="detail" id="detail" hidden></section>
+  <section class="live" id="live" hidden>
+    <h2>Live tokens — already trading</h2>
+    <p class="note">These protocols record a token, so the board shows the market's own value for them, never a model's guess. They are the comparison set, not the hunt.</p>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Protocol</th><th>Category</th><th>Chains</th><th class="num">TVL</th><th class="num">Market cap</th><th class="num">7d</th></tr></thead>
+      <tbody id="live-rows"></tbody>
+    </table></div>
+  </section>
+</main>
+<footer>
+  <p><strong>How the number is made (model signal-1):</strong> implied value = TVL × category multiple × growth multiplier × maturity multiplier × breadth multiplier × size taper. The category multiple is what the market pays for that kind of protocol's TVL; growth is the 7-day TVL change clamped to −40%…+100%; maturity grows with how long the protocol has run with no token; breadth rewards each extra chain; the taper trims the largest books. No protocol name is special-cased — the same arithmetic scores every row.</p>
+  <p>“Records no token” means the snapshot's record carries no token for the protocol; it is not proof it has none. Snapshot: DefiLlama protocols data, fetched 2026-11-14. This board is the entry's own claim, never a prediction that a token will launch.</p>
+</footer>
+<script src="../data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
