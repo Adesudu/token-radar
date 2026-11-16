@@ -179,12 +179,18 @@
     panel.hidden = false;
   }
 
+  function hideDetail() {
+    document.getElementById('detail').hidden = true;
+    state.selected = null;
+  }
+
   function applyHash() {
     var h = location.hash || '#/';
     var m;
-    if (h === '#/live') { setTab('live'); return; }
+    if (h === '#/live') { hideDetail(); setTab('live'); return; }
     if ((m = h.match(/^#\/protocol\/(.+)$/))) { setTab('pre'); renderDetail(decodeURIComponent(m[1])); renderBoard(); return; }
     if ((m = h.match(/^#\/category\/(.+)$/))) {
+      hideDetail();
       setTab('pre');
       var cat = decodeURIComponent(m[1]);
       state.category = cat;
@@ -192,6 +198,7 @@
       renderBoard();
       return;
     }
+    hideDetail();
     setTab('pre');
     renderBoard();
   }

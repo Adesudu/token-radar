@@ -251,14 +251,34 @@ export function impliedValue(
 /** DefiLlama's version-marker rule: a name ending in a release is a pool of another protocol. */
 const VERSIONED = /\s(V\d+(\.\d+)?|v\d+(\.\d+)?|\d+\.\d+)$/;
 
+/**
+ * The watchlist's own exclusion, applied to the whole board: a wrapped, staked or bridged
+ * product of a token that already trades is not a token that does not exist yet. The categories
+ * are the house's list (Bridge, Canonical Bridge, Liquid Staking, Liquid Restaking, Restaked
+ * BTC, CEX); the name carries no whole word wrapped, staked or staking, and does not begin
+ * with an exchange's name. `parentProtocol` is not one of the snapshot's ten fields, so the
+ * rule reads what the snapshot carries.
+ */
+const EXCLUDED_CATEGORIES = new Set(['Bridge', 'Canonical Bridge', 'Liquid Staking', 'Liquid Restaking', 'Restaked BTC', 'CEX']);
+const EXCHANGE_PREFIXES = ['Binance', 'Coinbase', 'Bybit', 'Kraken', 'Bitget', 'OKX', 'Bitfinex', 'Gemini'];
+const WRAPPED_WORD = /\b(wrapped|staked|staking)\b/i;
+
 /** Whether a protocol records no token at all. */
 export function isPreToken(p: SnapshotProtocol): boolean {
   return p.mcap_usd === null && p.gecko_id === null && p.symbol === null;
 }
 
-/** Whether a protocol is one the board may rank: pre-token, not an exchange, not a versioned pool. */
+/**
+ * Whether a protocol is one the board may rank: pre-token, not a wrapped/staked/bridged
+ * product of a token that already trades, not an exchange, not a versioned pool.
+ */
 export function isRankable(p: SnapshotProtocol): boolean {
-  return isPreToken(p) && p.category !== 'CEX' && !VERSIONED.test(p.name);
+  if (!isPreToken(p)) return false;
+  if (p.category !== null && EXCLUDED_CATEGORIES.has(p.category)) return false;
+  if (VERSIONED.test(p.name)) return false;
+  if (WRAPPED_WORD.test(p.name)) return false;
+  if (EXCHANGE_PREFIXES.some((x) => p.name.startsWith(x))) return false;
+  return true;
 }
 
 /** The snapshot's protocol by slug. */
